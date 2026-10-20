@@ -1,0 +1,38 @@
+{
+  "departments": [
+    {
+      "value": "AOM",
+      "label": "AOM"
+    },
+    {
+      "value": "AOI",
+      "label": "AOI"
+    }
+  ],
+  "workLocations": [
+    {
+      "value": "Scan",
+      "label": "Scan"
+    },
+    {
+      "value": "Verify",
+      "label": "Verify"
+    },
+    {
+      "value": "Carrier",
+      "label": "Vận chuyển hàng (Carrier)"
+    },
+    {
+      "value": "Support",
+      "label": "Support"
+    },
+    {
+      "value": "Sub Leader",
+      "label": "Tổ phó (Sub Leader)"
+    },
+    {
+      "value": "Group Leader",
+      "label": "Tổ trưởng (Group Leader)"
+    }
+  ]
+}

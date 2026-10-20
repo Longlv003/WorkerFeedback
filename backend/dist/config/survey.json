@@ -1,0 +1,197 @@
+{
+  "surveyId": "worker-feedback-2026",
+  "title": "KHẢO SÁT Ý KIẾN NGƯỜI LAO ĐỘNG",
+  "description": "Ý kiến đóng góp chân thực của bạn giúp Ban quản lý lắng nghe, giải quyết bức xúc và cải thiện môi trường làm việc ngày càng tốt hơn.",
+  "version": "2.0.0",
+  "questions": [
+    {
+      "id": "Q1",
+      "text": "Câu 1. Bạn đang gặp vấn đề gì khiến bản thân bức xúc hoặc không hài lòng trong quá trình làm việc tại công đoạn không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "yes" },
+          "question": {
+            "id": "Q1_DETAIL",
+            "text": "Bạn hãy mô tả cụ thể vấn đề bạn đang gặp phải:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q2",
+      "text": "Câu 2. Bạn hài lòng với cách quản lý, điều hành, giao việc hoặc ứng xử của leader/sub leader không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "no" },
+          "question": {
+            "id": "Q2_DETAIL",
+            "text": "Bạn hãy nêu cụ thể điều bạn chưa hài lòng:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q3",
+      "text": "Câu 3. Bạn cảm thấy việc phân công công việc, hỗ trợ của leader/sub leader giữa các thành viên trong ca có hợp lý không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có, hợp lý" },
+        { "value": "no",  "label": "Không hợp lý" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "no" },
+          "question": {
+            "id": "Q3_DETAIL",
+            "text": "Bạn hãy mô tả cụ thể điều chưa hợp lý:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q4",
+      "text": "Câu 4. Bạn có gặp mâu thuẫn, bất đồng hoặc khó khăn trong phối hợp với đồng nghiệp làm ảnh hưởng đến công việc không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "yes" },
+          "question": {
+            "id": "Q4_DETAIL",
+            "text": "Bạn hãy mô tả cụ thể mâu thuẫn hoặc khó khăn đó:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q5",
+      "text": "Câu 5. Bạn có gặp vấn đề trong cách trao đổi thông tin, tiếp nhận chỉ đạo hoặc giải quyết công việc trong phòng không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "yes" },
+          "question": {
+            "id": "Q5_DETAIL",
+            "text": "Bạn hãy mô tả cụ thể vấn đề trong trao đổi thông tin:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q6",
+      "text": "Câu 6. Bạn có nhận thấy tình trạng thiếu phối hợp, né tránh trách nhiệm hoặc không tuân thủ sự phân công làm ảnh hưởng đến công việc chung không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "yes" },
+          "question": {
+            "id": "Q6_DETAIL",
+            "text": "Bạn hãy mô tả cụ thể tình trạng đó:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q7",
+      "text": "Câu 7. Bạn còn có vấn đề hoặc bức xúc nào khác ảnh hưởng đến tinh thần và sự hợp tác trong phòng muốn phản ánh không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "yes" },
+          "question": {
+            "id": "Q7_DETAIL",
+            "text": "Bạn hãy chia sẻ thêm vấn đề hoặc bức xúc đó:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q8",
+      "text": "Câu 8. Bạn có ý tưởng nào để gắn kết các thành viên trong phòng lại với nhau không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "yes" },
+          "question": {
+            "id": "Q8_DETAIL",
+            "text": "Bạn hãy chia sẻ ý tưởng gắn kết đó:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "Q9",
+      "text": "Câu 9. Bạn có ý tưởng hoặc đề xuất cải tiến nào giúp công đoạn làm việc thuận lợi hơn, nâng cao năng suất, giảm lỗi hoặc tăng hiệu quả phối hợp trong phòng không?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        { "value": "yes", "label": "Có" },
+        { "value": "no",  "label": "Không" }
+      ],
+      "conditionalQuestions": [
+        {
+          "showWhen": { "operator": "equals", "value": "yes" },
+          "question": {
+            "id": "Q9_DETAIL",
+            "text": "Bạn hãy nêu cụ thể ý tưởng hoặc đề xuất cải tiến:",
+            "type": "textarea",
+            "required": true
+          }
+        }
+      ]
+    }
+  ]
+}

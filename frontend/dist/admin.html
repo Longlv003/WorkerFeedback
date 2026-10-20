@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kết quả khảo sát | SEI Worker Feedback</title>
+  <link rel="stylesheet" href="/admin.css" />
+  <script src="/admin.js" defer></script>
+</head>
+<body>
+  <section id="login-screen" class="login-screen">
+    <form id="login-form" class="login-card">
+      <span class="eyebrow">SEI · WORKER FEEDBACK</span>
+      <h1>Đăng nhập quản trị</h1>
+      <p>Xem kết quả khảo sát người lao động.</p>
+      <label for="password-input">Mật khẩu quản trị</label>
+      <input id="password-input" type="password" autocomplete="current-password" required placeholder="Nhập mật khẩu" />
+      <button id="login-btn" class="primary" type="submit">Đăng nhập</button>
+      <p id="login-error" class="error" role="alert" hidden></p>
+    </form>
+  </section>
+  <main id="app-shell" hidden>
+    <header class="topbar">
+      <div><span class="eyebrow">SEI · WORKER FEEDBACK</span><h1>Kết quả khảo sát</h1><p>Danh sách người tham gia và toàn bộ câu trả lời</p></div>
+      <div class="actions"><button id="reload-btn" class="primary" type="button">↻ Tải lại dữ liệu</button><button id="export-btn" class="export" type="button" title="Xuất toàn bộ dữ liệu mới nhất, bao gồm các bản ghi ngoài bộ lọc hiện tại">Xuất Excel</button><button id="logout-btn" type="button">Đăng xuất</button></div>
+    </header>
+    <section class="summary" aria-label="Tổng lượt tham gia">
+      <div><span class="summary-label">Tổng lượt tham gia</span><strong id="total-count">—</strong></div>
+      <p id="last-updated" role="status" aria-live="polite">Chưa tải dữ liệu</p>
+    </section>
+    <section class="filters" aria-label="Bộ lọc kết quả">
+      <div class="search"><label for="search-input">Tìm người tham gia</label><input id="search-input" type="search" placeholder="Nhập ID hoặc họ tên..." /></div>
+      <div><label for="department-filter">Bộ phận / Phòng ban</label><select id="department-filter"><option value="">Tất cả bộ phận</option></select></div>
+      <div><label for="location-filter">Vị trí làm việc</label><select id="location-filter"><option value="">Tất cả vị trí</option></select></div>
+      <div><label for="date-from">Từ ngày</label><input id="date-from" type="date" /></div>
+      <div><label for="date-to">Đến ngày</label><input id="date-to" type="date" /></div>
+      <button id="clear-filters" type="button">Xóa bộ lọc</button>
+    </section>
+    <p id="data-error" class="error" role="alert" hidden></p>
+    <p id="export-status" role="status" aria-live="polite" hidden></p>
+    <section class="results">
+      <div class="table-toolbar"><h2>Chi tiết câu trả lời</h2><span id="filtered-count" role="status" aria-live="polite">Đang tải...</span></div>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Bảng kết quả khảo sát, cuộn ngang để xem tất cả câu hỏi">
+        <table><thead id="results-head"></thead><tbody id="results-body"></tbody></table>
+      </div>
+      <p class="table-hint">Cuộn ngang để xem toàn bộ câu hỏi. Ngày gửi được hiển thị theo giờ Việt Nam.</p>
+    </section>
+  </main>
+</body>
+</html>
