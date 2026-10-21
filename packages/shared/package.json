@@ -4,9 +4,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "node ../../scripts/run-tool.cjs typescript tsc"
   },
   "devDependencies": {
-    "typescript": "^5.3.3"
+    "typescript": "5.9.3"
   }
 }

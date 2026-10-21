@@ -79,7 +79,96 @@ npm run dev:frontend
 
 Vite chuyển tiếp các yêu cầu `/api` đến backend tại `http://localhost:5000`. Cấu hình nằm trong `frontend/vite.config.ts`.
 
+Hai lệnh `dev:*` ở thư mục gốc tự build `packages/shared` trước khi khởi động. TypeScript được cố định ở `5.9.3` (compiler JavaScript) để không phụ thuộc binary TypeScript 7 cho từng hệ điều hành.
+
+Các script gọi CLI TypeScript/Vite/tsx qua `node` bằng `scripts/run-tool.cjs`, tránh lỗi `tsc: Permission denied` do tệp `.bin` mất quyền thực thi khi chuyển từ Windows sang Termux. Cần sao chép cả thư mục `scripts` khi cập nhật dự án trên điện thoại.
+
 Để truy cập từ thiết bị cùng mạng, dùng địa chỉ IP của máy chạy frontend thay cho `localhost`, ví dụ `http://<IP-máy-chủ>:5173/admin.html`. Thiết bị cần kết nối được đến cổng frontend.
+
+## Chạy trên Android / Termux (Samsung A03)
+
+Chưa kiểm thử trực tiếp trên Samsung A03. Không dùng lại `node_modules` từ Windows hoặc từ một môi trường Linux khác. Bản repository hiện có cả dependency đã được Git theo dõi; `.gitignore` chỉ ngăn thêm tệp mới, không loại các tệp đã được theo dõi. Cần cài lại dependency trên điện thoại.
+
+Đặt mã nguồn trong thư mục riêng của Termux, ví dụ `~/worker-feedback`, thay vì chạy tại `/sdcard`, `/storage/emulated/0` hoặc `~/storage/shared`. Bộ nhớ dùng chung của Android không có đầy đủ quyền thực thi và symbolic link mà npm workspaces cần. Nếu sao chép dự án từ máy tính, bỏ qua mọi thư mục `node_modules` và `dist`; giữ các tệp mã nguồn, `package.json` và `package-lock.json`.
+
+Cài môi trường trong Termux:
+
+```sh
+pkg update
+pkg upgrade
+pkg install nodejs-lts python make clang pkg-config binutils
+node -v
+npm -v
+node -p "process.platform + ' ' + process.arch"
+```
+
+Backend dùng `better-sqlite3@13`, yêu cầu Node.js >= 22. Kiểm tra `process.arch` thực tế; không suy ra ARM 32-bit hay ARM64 chỉ từ tên điện thoại.
+
+Tại thư mục gốc của bản mã nguồn đã cập nhật, ví dụ:
+
+```sh
+cd ~/worker-feedback
+npm ci --include=dev --include=optional
+```
+
+`npm ci` thay dependency đã cài bằng các phiên bản trong lockfile, kể cả thư mục dependency bên trong workspace. Không sao chép đè `node_modules` từ máy tính sau bước này. Không dùng `--omit=optional`: Vite/Rollup/esbuild cần các gói dành cho đúng nền tảng.
+
+### Biên dịch SQLite cho Termux
+
+Trong phiên bản `better-sqlite3@13.0.3` đang khóa, binary đóng gói chỉ dành cho Linux/macOS/Windows, không có Android. Package đặt `gypfile: false` và không có script `install`, nên cài bằng npm chưa tự tạo binary Android. Cần thử biên dịch native module bằng toolchain của Termux:
+
+```sh
+export npm_config_python="$(command -v python)"
+export npm_config_nodedir="$PREFIX"
+export GYP_DEFINES="${GYP_DEFINES:+$GYP_DEFINES }android_ndk_path=$PREFIX"
+npm exec --yes --package=node-gyp -- node-gyp rebuild --directory=node_modules/better-sqlite3 --release --jobs=1
+```
+
+`--jobs=1` giới hạn số tác vụ biên dịch đồng thời trên điện thoại ít RAM. `npm_config_nodedir` dùng header Node.js của Termux thay vì tải header cho Linux tiêu chuẩn. Lệnh có thể vẫn cần điều chỉnh theo phiên bản Node/Termux; nếu lỗi, giữ nguyên log để chẩn đoán, đặc biệt phần `gyp ERR!` hoặc lỗi compiler đầu tiên.
+
+Kiểm tra SQLite bằng cơ sở dữ liệu trong RAM, không tác động dữ liệu khảo sát:
+
+```sh
+node -e "const Database=require('better-sqlite3'); const db=new Database(':memory:'); console.log(db.prepare('SELECT 1 AS ok').get()); db.close();"
+npm run build
+```
+
+Sau đó mở hai phiên Termux, cùng vào thư mục gốc dự án:
+
+```sh
+# Phiên 1
+npm run dev:backend
+```
+
+```sh
+# Phiên 2
+npm run dev:frontend
+```
+
+Mở trình duyệt trên điện thoại tại `http://127.0.0.1:5173`. Hai lệnh dev chạy liên tục; terminal chưa trở lại dấu nhắc là bình thường khi server đã khởi động. Giữ Termux hoạt động; Android có thể dừng tiến trình nền.
+
+Nếu có lỗi, gửi kết quả các lệnh sau cùng phần lỗi đầu tiên của lệnh không chạy:
+
+```sh
+pwd
+node -v
+npm -v
+node -p "process.platform + ' ' + process.arch"
+npm ls typescript better-sqlite3 vite rollup esbuild tsx
+```
+
+| Thông báo | Hướng kiểm tra |
+| --- | --- |
+| `Permission denied`, `EPERM`, lỗi `symlink` | Chuyển mã nguồn vào `~/worker-feedback`, cài dependency tại đó. |
+| `@typescript/typescript-android-*` | Dùng `package.json` và lockfile đã cập nhật TypeScript 5.9.3, rồi cài lại bằng `npm ci`. |
+| `@rollup/rollup-android-*`, lỗi esbuild khác nền tảng | Không dùng dependency Windows; cài lại với `--include=optional`. |
+| `better_sqlite3.node`, `ERR_DLOPEN_FAILED` | Biên dịch SQLite tại môi trường đang chạy và kiểm tra bằng database trong RAM ở trên. |
+| `Cannot find module '@worker-feedback/shared'` | Cài từ thư mục gốc; chạy `npm run build:shared`. |
+| `Killed` / signal 9 | Kiểm tra giới hạn RAM và cơ chế dừng ứng dụng nền của Android; đóng ứng dụng khác, chạy build riêng trước khi mở hai server. |
+
+Nếu native module vẫn không biên dịch được, có thể dùng Linux qua [PRoot Distro của Termux](https://github.com/termux/proot-distro). Cài Node.js >= 22 và dependency bên trong Linux đó; không dùng chung `node_modules` với Termux native. Đây là phương án cần cài thêm môi trường, chưa được kiểm thử cho dự án này trên A03.
+
+Tham khảo: [môi trường thực thi Termux](https://github.com/termux/termux-packages/wiki/Termux-execution-environment), [lưu trữ dùng chung](https://wiki.termux.com/wiki/Internal_and_external_storage), [biên dịch better-sqlite3](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/compilation.md).
 
 ## Build và chạy bản đã biên dịch
 

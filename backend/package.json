@@ -4,9 +4,9 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc && node -e \"require('fs').cpSync('src/config', 'dist/config', {recursive: true})\"",
+    "build": "node ../scripts/run-tool.cjs typescript tsc && node -e \"require('fs').cpSync('src/config', 'dist/config', {recursive: true})\"",
     "start": "node dist/index.js",
-    "dev": "tsx watch src/index.ts"
+    "dev": "node ../scripts/run-tool.cjs tsx tsx watch src/index.ts"
   },
   "dependencies": {
     "@types/better-sqlite3": "^9.6.0",
@@ -26,6 +26,6 @@
     "@types/node": "^20.11.24",
     "@types/uuid": "^9.0.8",
     "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "typescript": "5.9.3"
   }
 }
