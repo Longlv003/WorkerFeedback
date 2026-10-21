@@ -2,6 +2,8 @@
   "name": "worker-feedback-root",
   "private": true,
   "scripts": {
+    "setup:termux": "node scripts/setup-termux.cjs",
+    "check:sqlite": "node scripts/check-sqlite.cjs",
     "predev:backend": "npm run build:shared",
     "dev:backend": "npm run dev --prefix backend",
     "predev:frontend": "npm run build:shared",

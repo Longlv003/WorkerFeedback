@@ -102,35 +102,34 @@ npm -v
 node -p "process.platform + ' ' + process.arch"
 ```
 
-Backend dùng `better-sqlite3@13`, yêu cầu Node.js >= 22. Kiểm tra `process.arch` thực tế; không suy ra ARM 32-bit hay ARM64 chỉ từ tên điện thoại.
+Backend khóa `better-sqlite3@11.10.0`, cùng phiên bản trong lockfile của repo tham khảo `20.10` đã chạy được trên Termux. Bản 11 có script cài đặt tự biên dịch native module khi không có binary phù hợp. Dự án yêu cầu Node.js >= 22; Node.js 24.13.0 của máy đang gặp lỗi đáp ứng yêu cầu này. Kiểm tra `process.arch` thực tế; không suy ra ARM 32-bit hay ARM64 chỉ từ tên điện thoại.
 
 Tại thư mục gốc của bản mã nguồn đã cập nhật, ví dụ:
 
 ```sh
 cd ~/worker-feedback
-npm ci --include=dev --include=optional
+npm run setup:termux
 ```
 
-`npm ci` thay dependency đã cài bằng các phiên bản trong lockfile, kể cả thư mục dependency bên trong workspace. Không sao chép đè `node_modules` từ máy tính sau bước này. Không dùng `--omit=optional`: Vite/Rollup/esbuild cần các gói dành cho đúng nền tảng.
+`setup:termux` dùng `npm ci` để thay dependency đã cài bằng các phiên bản trong lockfile, cấu hình compiler/header Node của Termux và giới hạn biên dịch ở một tác vụ. Script bật install hooks để SQLite được biên dịch; nếu npm bỏ sót gói Rollup Android, script cài bổ sung đúng phiên bản. Cuối cùng script kiểm tra SQLite bằng database trong RAM. Script dừng nếu có bước thất bại. Lệnh này thay `node_modules`; không thay dữ liệu khảo sát hay sửa package.json/lockfile. Không sao chép đè `node_modules` từ máy tính sau bước này. Không dùng `--omit=optional`: Vite/Rollup/esbuild cần các gói dành cho đúng nền tảng.
 
-### Biên dịch SQLite cho Termux
+### Kiểm tra SQLite sau khi cài đặt
 
-Trong phiên bản `better-sqlite3@13.0.3` đang khóa, binary đóng gói chỉ dành cho Linux/macOS/Windows, không có Android. Package đặt `gypfile: false` và không có script `install`, nên cài bằng npm chưa tự tạo binary Android. Cần thử biên dịch native module bằng toolchain của Termux:
+Lỗi `Cannot find module .../better_sqlite3.node` xảy ra khi native module chưa được biên dịch. Phiên bản 13.0.3 trước đây không có install hook; bản sửa chuyển về 11.10.0 để khôi phục bước biên dịch lúc cài như repo tham khảo. Sau khi cập nhật mã nguồn trên điện thoại:
 
 ```sh
-export npm_config_python="$(command -v python)"
-export npm_config_nodedir="$PREFIX"
-export GYP_DEFINES="${GYP_DEFINES:+$GYP_DEFINES }android_ndk_path=$PREFIX"
-npm exec --yes --package=node-gyp -- node-gyp rebuild --directory=node_modules/better-sqlite3 --release --jobs=1
+git pull origin main
+npm run setup:termux
+npm run check:sqlite
+npm run build
 ```
 
-`--jobs=1` giới hạn số tác vụ biên dịch đồng thời trên điện thoại ít RAM. `npm_config_nodedir` dùng header Node.js của Termux thay vì tải header cho Linux tiêu chuẩn. Lệnh có thể vẫn cần điều chỉnh theo phiên bản Node/Termux; nếu lỗi, giữ nguyên log để chẩn đoán, đặc biệt phần `gyp ERR!` hoặc lỗi compiler đầu tiên.
+Script dùng header Node.js của Termux thay vì tải header cho Linux tiêu chuẩn. Lệnh có thể vẫn cần điều chỉnh theo phiên bản Node/Termux; nếu lỗi, giữ nguyên log để chẩn đoán, đặc biệt phần `gyp ERR!` hoặc lỗi compiler đầu tiên. Nếu trước đó đã dùng bản 13 tạo database, dừng server và sao lưu các tệp SQLite liên quan trước khi đổi phiên bản; không xóa database để sửa lỗi dependency.
 
 Kiểm tra SQLite bằng cơ sở dữ liệu trong RAM, không tác động dữ liệu khảo sát:
 
 ```sh
-node -e "const Database=require('better-sqlite3'); const db=new Database(':memory:'); console.log(db.prepare('SELECT 1 AS ok').get()); db.close();"
-npm run build
+npm run check:sqlite
 ```
 
 Sau đó mở hai phiên Termux, cùng vào thư mục gốc dự án:
